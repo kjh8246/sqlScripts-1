@@ -1,6 +1,20 @@
+-- 날짜 타입 : date, timestamp (timezone 설정 가능)
+CREATE TABLE table_date(
+	acol DATE,
+	bcol timestamp ,
+	ccol timestamp DEFAULT sysdate  
+	-- 값을 지정안했을 때 기본값(default) :sysdate 는 현재 날짜/시간(서버)
+	-- 클라이언트 컴퓨터의 시간은 current_date 
+);
+-- 날짜형식은 문자열 타입과 자동캐스팅이 됩니다.''안에 yyyy-MM-dd hh:mm:ss 문자열 형식으로 작성.
+INSERT INTO IDEV.TABLE_DATE (ACOL, BCOL)
+VALUES('2022-02-07', '2022-02-07');
+
+SELECT * FROM table_date ;
+
 -- 문자열 타입
 -- CHAR(길이) : 고정길이 , 단위는 바이트 
--- VARCHAR(길이) : 오라클에서 존재하고 사용하지 않는 예비자료형.
+-- VARCHAR(길이) : 오라클에서 존재하지만 사용하지 않는 예비자료형.
 -- VARCHAR2(길이) : 가변형길이 단위 바이트, 길이는 최대길이이고 실제로 메모리는 데이터크기만큼 사용합니다.
 --				최대 2000바이트입니다. UTF-8 인코딩에서 한글은 3바이트, 영문/숫자/기호는 1바이트
 
