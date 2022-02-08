@@ -65,15 +65,27 @@ SELECT * FROM "TBL_PRODUCT#" tp
 		 JOIN "TBL_BUY#" tb 
 		 ON tp.PCODE =tb.PCODE ; 
 		
--- 	mina012 가 구매한 상품명은 무엇인가?	
+-- 	mina012 가 구매한 상품명은 무엇인가 조회하기
+SELECT tp.PNAME  FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb 
+		 WHERE tp.PCODE = tb.PCODE AND custom_id ='mina012';		
+		
+--  mina012 가 구매한 상품명과 가격 조회하기		
+SELECT tp.PNAME,tp.PRICE  FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb 
+		 WHERE tp.PCODE = tb.PCODE AND custom_id ='mina012';	
+		
+-- 조인할때 , 공통된 컬럼은 테이블명을 꼭 지정해야 합니다.		
+SELECT tp.PCODE ,tp.PNAME  FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb 
+		 WHERE tp.PCODE = tb.PCODE AND custom_id ='mina012';	
 		
 		
 		
 		
 -- 데이터 테스트 또는 데이터 관리를 위해 테이블의 모든 데이터 삭제하기
+-- delete : rollback으로 삭제 취소 가능, truncate : 삭제 취소불가능
+-- truncate : 참조관계일 때 , fk를 비활성화하고 데이터 삭제해야합니다.		
 TRUNCATE TABLE "TBL_BUY#" ;		-- 참조테이블 데이터 먼저 삭제
-DELETE FROM "TBL_PRODUCT#" ;
-TRUNCATE TABLE "TBL_CUSTOM#" ;
+DELETE FROM "TBL_PRODUCT#" ;	-- 전체 데이터 삭제시 디비버에서 경고-> 확인
+TRUNCATE TABLE "TBL_CUSTOM#" ;	-- 오류
 		
 		
 
