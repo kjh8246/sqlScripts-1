@@ -58,7 +58,7 @@ ALTER TABLE IDEV."TBL_BUY#"
 --					where a.공통컬럼1=b.공통컬럼1;	
 
 SELECT * FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb 
-		 WHERE tp.PCODE = tb.PCODE ;
+		 WHERE tp.PCODE = tb.PCODE ;		-- 동등 조인.
 
 -- JOIN을 쓰는 명령문 형식2(표준)
 SELECT * FROM "TBL_PRODUCT#" tp 
@@ -76,9 +76,19 @@ SELECT tp.PNAME,tp.PRICE  FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb
 -- 조인할때 , 공통된 컬럼은 테이블명을 꼭 지정해야 합니다.		
 SELECT tp.PCODE ,tp.PNAME  FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb 
 		 WHERE tp.PCODE = tb.PCODE AND custom_id ='mina012';	
-		
-		
-		
+
+-- 외부조인 형식 2가지		
+SELECT * FROM "TBL_PRODUCT#" tp , "TBL_BUY#" tb 
+		 WHERE tp.PCODE = tb.PCODE(+) ;		-- 외부조인.
+
+-- JOIN을 쓰는 명령문 형식2(표준)
+SELECT * FROM "TBL_PRODUCT#" tp 
+		 LEFT OUTER JOIN "TBL_BUY#" tb 	-- 기준이 되는 테이블은 왼쪽 product#
+		 ON tp.PCODE =tb.PCODE ; 		
+
+SELECT * FROM "TBL_BUY#" tb
+		 RIGHT OUTER JOIN "TBL_PRODUCT#" tp  	-- 기준이 되는 테이블은 오른쪽 product#
+		 ON tp.PCODE =tb.PCODE ; 
 		
 -- 데이터 테스트 또는 데이터 관리를 위해 테이블의 모든 데이터 삭제하기
 -- delete : rollback으로 삭제 취소 가능, truncate : 삭제 취소불가능
