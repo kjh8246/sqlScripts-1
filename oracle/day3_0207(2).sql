@@ -1,76 +1,55 @@
--- 예시 : 쇼핑몰 (고객이 상품을 구매합니다.)
--- 고객 테이블 
-CREATE TABLE tbl_custom (
-	custom_id varchar2(20),  --영문/숫자/기호
-	name nvarchar2(20),		 --한글등 다국어문자 갯수
-	email varchar2(20),
-	age number(3),
-	reg_date timestamp DEFAULT sysdate
+-- 날짜 타입 : date, timestamp (timezone 설정 가능)
+CREATE TABLE table_date(
+	acol DATE,
+	bcol timestamp ,
+	ccol timestamp DEFAULT sysdate  
+	-- 값을 지정안했을 때 기본값(default) :sysdate 는 현재 날짜/시간(서버)
+	-- 클라이언트 컴퓨터의 시간은 current_date 
 );
--- 상품 테이블 : 상품코드(가변길이 20자리),카테고리(고정길이 2자리)
---								A1:전자제품, B1:식품
-CREATE TABLE tbl_product(
-	pcode varchar2(20),
-	category char(2),
-	pname nvarchar2(20),
-	price number(9)
+-- 날짜형식은 문자열 타입과 자동캐스팅이 됩니다.''안에 yyyy-MM-dd hh:mm:ss 문자열 형식으로 작성.
+INSERT INTO IDEV.TABLE_DATE (ACOL, BCOL)
+VALUES('2022-02-07', '2022-02-07');
+
+SELECT * FROM table_date ;
+
+-- 문자열 타입
+-- CHAR(길이) : 고정길이 , 단위는 바이트 
+-- VARCHAR(길이) : 오라클에서 존재하지만 사용하지 않는 예비자료형.
+-- VARCHAR2(길이) : 가변형길이 단위 바이트, 길이는 최대길이이고 실제로 메모리는 데이터크기만큼 사용합니다.
+--				최대 2000바이트입니다. UTF-8 인코딩에서 한글은 3바이트, 영문/숫자/기호는 1바이트
+
+CREATE TABLE table_string(
+	acol char(10),
+	bcol varchar2(10),
+	ccol nchar(10),
+	dcol nvarchar2(10)
 );
+-- CHAR 타입 확인
+INSERT INTO table_string(acol) VALUES ('abcdefghij');
+INSERT INTO table_string(acol) VALUES ('abcde');
+INSERT INTO table_string(acol) VALUES ('가나다라');  -- 4글자 * 3바이트 
+INSERT INTO table_string(acol) VALUES ('가나다');
 
--- 구매 테이블 : 어느 고객이 무슨 상품을 구입하는가?
-CREATE TABLE tbl_buy(
-	custom_id varchar2(20),
-	pcode varchar2(20),
-	quantity number(5),		--수량
-	buy_date timestamp 
-);
+-- VARCHAR2 타입 확인 : CHAR 비교했을때 추가되는 공백 없습니다.
+INSERT INTO table_string(bcol) VALUES ('abcdefghij');
+INSERT INTO table_string(bcol) VALUES ('abcde');
+INSERT INTO table_string(bcol) VALUES ('가나다라');  -- 4글자 * 3바이트 
+INSERT INTO table_string(bcol) VALUES ('가나다');
 
--- 데이터의 추가 : INSERT 
-INSERT INTO IDEV.TBL_CUSTOM(CUSTOM_ID, NAME, EMAIL, AGE, REG_DATE)
-VALUES('mina012', '김미나', 'kimm@gmail.com', 20, sysdate);
-INSERT INTO IDEV.TBL_CUSTOM(CUSTOM_ID, NAME, EMAIL, AGE, REG_DATE)
-VALUES('hongGD', '홍길동', 'gil@korea.com', 32, sysdate);
-INSERT INTO IDEV.TBL_CUSTOM(CUSTOM_ID, NAME, EMAIL, AGE, REG_DATE)
-VALUES('twice', '박모모', 'momo@daum.net', 29, sysdate);
-INSERT INTO IDEV.TBL_CUSTOM(CUSTOM_ID, NAME, EMAIL, AGE, REG_DATE)
-VALUES('wonder', '이나나', 'lee@naver.com', 40, sysdate);
--- 중요1 : custom 테이블의 행(row)데이터를 구분한 CUSTOM_ID ,PCODE 는 중복되면 안됩니다.
-INSERT INTO IDEV.TBL_CUSTOM(CUSTOM_ID, NAME, EMAIL, AGE, REG_DATE)
-VALUES('wonder', '최모모', 'choi@naver.com', 33, sysdate);
+-- NCHAR 타입 확인 : 고정길이 , 단위는 문자개수
+INSERT INTO table_string(ccol) VALUES ('abcdefghij');
+INSERT INTO table_string(ccol) VALUES ('abcde');
+INSERT INTO table_string(ccol) VALUES ('가나다라');  -- 4글자 * 3바이트 
+INSERT INTO table_string(ccol) VALUES ('가나다라마바사아자차');   --10글자는 OK
+INSERT INTO table_string(ccol) VALUES ('가나다라마바사아자차카');		-- 11글자는 오류
 
+-- NVARCHAR2 타입 확인 : 가변길이 , 단위는 문자개수. NCHAR 비교했을때 추가되는 공백 없습니다.
+INSERT INTO table_string(dcol) VALUES ('abcdefghij');
+INSERT INTO table_string(dcol) VALUES ('abcde');
+INSERT INTO table_string(dcol) VALUES ('가나다라');  -- 4글자 * 3바이트 
+INSERT INTO table_string(dcol) VALUES ('가나다라마바사아자차');   --10글자는 OK
+INSERT INTO table_string(dcol) VALUES ('가나다라마바사아자차카');		-- 11글자는 오류
 
-INSERT INTO IDEV.TBL_PRODUCT(PCODE, CATEGORY, PNAME, PRICE)
-VALUES('IPAD011', 'A1', '아이패드10', 880000);
-INSERT INTO IDEV.TBL_PRODUCT(PCODE, CATEGORY, PNAME, PRICE)
-VALUES('DOWON123a', 'B1', '동원참치선물세트', 54000);
-INSERT INTO IDEV.TBL_PRODUCT(PCODE, CATEGORY, PNAME, PRICE)
-VALUES('dk_143', 'A2', '모션데스크', 234500);
--- 중요2: 예를들면  PRICE , QUANTITY 등의 컬럼은 꼭 필수 데이터로 저장되어야 합니다.
-INSERT INTO IDEV.TBL_PRODUCT(PCODE, CATEGORY, PNAME)
-VALUES('dk_1433', 'A2', '자동모션데스크');
-
--- 김미나가 아이패드 1개를 어제 구매
-INSERT INTO IDEV.TBL_BUY(CUSTOM_ID, PCODE, QUANTITY, BUY_DATE)
-VALUES('mina012', 'IPAD011', 1, '2022-02-06');
--- 홍길동이 아이패드 2개를 오늘 구매
-INSERT INTO IDEV.TBL_BUY(CUSTOM_ID, PCODE, QUANTITY, BUY_DATE)
-VALUES('hongGD', 'IPAD011', 2, sysdate);
--- 이나나가 참치선물세트 3개를 어제 구매
-INSERT INTO IDEV.TBL_BUY(CUSTOM_ID, PCODE, QUANTITY, BUY_DATE)
-VALUES('wonder', 'DOWON123a', 3, '2022-02-06');
--- 김미나가 모션데스크 1개를 오늘 구매
-INSERT INTO IDEV.TBL_BUY(CUSTOM_ID, PCODE, QUANTITY, BUY_DATE)
-VALUES('mina012', 'dk_143',1, sysdate);
--- 박모모가 참치선물세트 2개를 오늘 구매
-INSERT INTO IDEV.TBL_BUY(CUSTOM_ID, PCODE, QUANTITY, BUY_DATE)
-VALUES('twice', 'DOWON123a', 2, '2022-02-07');
-
--- 중요3: 고객과 상품테이블에 없는 CUSTOM_ID,PCODE 컬럼 값을 사용하면 부정확한 데이터
-INSERT INTO IDEV.TBL_BUY(CUSTOM_ID, PCODE, QUANTITY, BUY_DATE)
-VALUES('min012', 'd_143',1, sysdate);
-
-SELECT * FROM TBL_BUY tb;
-SELECT * FROM TBL_PRODUCT tp ;
-SELECT * FROM TBL_CUSTOM tc ;
-
+-- 여러가지 언어문자가 사용되고 저장될때 NVARCHAR2  글자수로 계산하는 것이 권고사항입니다.
 
 
